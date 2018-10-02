@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -40,7 +41,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    openFileInput("myfile");
+                   FileInputStream test=openFileInput("myfile");
+                   fileContents=fileContents+test.toString();
+                    System.out.println(test.getFD());
                 }catch (IOException e){
                     //didnt work
                 }
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         p1Fault.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                System.out.println(fileContents);
                 if(p1GameScore==0){
                     p1GameScore=15;
                 }
