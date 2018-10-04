@@ -12,16 +12,24 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
+    String filename = "groceryFile";//name of my file
+    FileOutputStream outputStream;//creates a fileoutputstream to save data to the file
+    FileInputStream inputStream;//creates a fileinputstream to load data from the file
+    ArrayList<String> groceryList;//array of strings that save groceries
     int p1GameScore=0;
     int p2GameScore=0;
     int p1SetScore=0;
     int p2SetScore=0;
-    String filename = "myfile";
-    String fileContents = "Hello world!";
-    FileOutputStream outputStream;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -40,28 +48,14 @@ public class MainActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                try {
-                   FileInputStream test=openFileInput("myfile");
-                   fileContents=fileContents+test.toString();
-                    System.out.println(test.getFD());
-                }catch (IOException e){
-                    //didnt work
-                }
-                fileContents=(inputTxt.getText().toString());
-                try {
-                    outputStream = openFileOutput(filename, Context.MODE_PRIVATE);
-                    outputStream.write(fileContents.getBytes());
-                    outputStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+
             }
         });
 
         p1Fault.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                System.out.println(fileContents);
                 if(p1GameScore==0){
                     p1GameScore=15;
                 }
@@ -137,5 +131,41 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+    public void save(){
+        try {
+            outputStream = openFileOutput(filename, Context.MODE_PRIVATE);//creates a 'stream' to save data to file
+            //saves the strings in the groceryList array
+            for(int i = 0; i < groceryList.size(); i++){
+                outputStream.write(groceryList.get(i).getBytes());//writes data to the file
+                if(i < groceryList.size() - 1){
+                    outputStream.write("\n".getBytes());//indents the writing to make new line
+                }
+            }
+
+            outputStream.close();//closes the 'stream' to stop saving
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void load(){
+        try{
+            inputStream = openFileInput(filename);//creates a 'stream' of data in bytes
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        InputStreamReader inputReader = new InputStreamReader(inputStream);//converts the byte stream to characters
+        BufferedReader bufferedReader = new BufferedReader(inputReader);//acts as a buffer for the info; processes it?
+
+        try {
+            String line = bufferedReader.readLine();//saves the line read to a temp variable to avoid reading next line during check
+            while (line != null){
+                groceryList.add(line);
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
