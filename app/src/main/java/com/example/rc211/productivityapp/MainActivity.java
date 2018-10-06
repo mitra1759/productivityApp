@@ -28,14 +28,15 @@ public class MainActivity extends AppCompatActivity {
     String filename = "statFile";//name of my file
     FileOutputStream outputStream;//creates a fileoutputstream to save data to the file
     FileInputStream inputStream;//creates a fileinputstream to load data from the file
-
+    String name;
+    String name2;
     int p1GameScore = 0;
     int p2GameScore = 0;
     int p1SetScore = 0;
     int p2SetScore = 0;
     int counter=0;
     boolean loaded = false;
-    int[] stat = new int[4];
+    int[] stat = new int[6];
     ArrayList<String> statList;//array of strings that save groceries
 
     @Override
@@ -51,28 +52,37 @@ public class MainActivity extends AppCompatActivity {
         final TextView p2Score = findViewById(R.id.p2Score);
         final TextView textview = findViewById(R.id.input1);
         final EditText inputTxt = findViewById(R.id.textInput);
+        final EditText inputTxt2 = findViewById(R.id.textInput2);
         final Button button = findViewById(R.id.confirmButton);
+        final Button button2 = findViewById(R.id.confirmButton2);
         final Button p1Fault = findViewById(R.id.p1Fault);
-
-
         final Button p2Fault = findViewById(R.id.p2Fault);
-        final String typedText = inputTxt.getText().toString();
-        System.out.println(typedText);
-
+        p1Fault.setText(name+"'s Point");
+        p2Fault.setText(name2+"'s Point");
+        inputTxt.setText(name, TextView.BufferType.EDITABLE);
+        inputTxt2.setText(name2, TextView.BufferType.EDITABLE);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                addSlots();
+                name=inputTxt.getText().toString();;
+//                textview.setText(name);
+                p1Fault.setText(name+"'s Point");
+                inputTxt.setText(name, TextView.BufferType.EDITABLE);
+            }
+        });
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                name2=inputTxt2.getText().toString();;
+                p2Fault.setText(name2+"'s Point");
+                inputTxt2.setText(name2, TextView.BufferType.EDITABLE);
             }
         });
 
         p1Fault.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                for(int a:stat){
-//                    System.out.println(a);
-//                }
-
+                p1Fault.setText(name+"'s Point");
                 if (p1GameScore == 0) {
                     p1GameScore = 15;
                 } else if (p1GameScore == 15) {
@@ -106,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 save();
                 textview.setText(stat[0]+" "+stat[1]+" "+ stat[2]+" "+ stat[3]+"");
+//                textview.setText(name);
 
             }
         });
@@ -160,6 +171,10 @@ public class MainActivity extends AppCompatActivity {
                     outputStream.write("\n".getBytes());//indents the writing to make new line
                     Toast.makeText(getApplicationContext(),"gygy",Toast.LENGTH_SHORT).show();}
                 }
+            outputStream.write("\n".getBytes());//indents the writing to make new line
+            outputStream.write(name.getBytes());//writes data to the file
+            outputStream.write("\n".getBytes());//indents the writing to make new line
+            outputStream.write(name2.getBytes());//writes data to the file
             outputStream.close();//closes the 'stream' to stop saving
             }
         catch (Exception e) {
@@ -179,9 +194,15 @@ public class MainActivity extends AppCompatActivity {
             try {
                 String line = bufferedReader.readLine();//saves the line read to a temp variable to avoid reading next line during check
                 while (line != null) {
-                    stat[counter]=stat[counter]+Integer.parseInt(line);
+                    if(counter<stat.length) {
+                        stat[counter] = stat[counter] + Integer.parseInt(line);
+                    }
+                    if(counter==stat.length) {
+                        name = line;
+                    }
+                    name2=line;
 //                    if(counter==0){
-//                    Toast.makeText(getApplicationContext(),Integer.parseInt(line)+"",Toast.LENGTH_SHORT).show();}
+                    Toast.makeText(getApplicationContext(),line+"",Toast.LENGTH_SHORT).show();
                     line = bufferedReader.readLine();
                     counter++;
 
